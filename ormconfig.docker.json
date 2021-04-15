@@ -1,0 +1,18 @@
+{
+  "type": "mysql",
+  "host": "db",
+  "port": 3306,
+  "username": "root",
+  "password": "secret",
+  "database": "account_social",
+  "synchronize": true,
+  "logging": false,
+  "entities": ["src/entity/**/*"],
+  "migrations": ["src/migration/**/*"],
+  "subscribers": ["src/subscriber/**/*"],
+  "cli": {
+    "entitiesDir": "src/entity",
+    "migrationsDir": "src/migration",
+    "subscribersDir": "src/subscriber"
+  }
+}

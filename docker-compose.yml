@@ -1,0 +1,30 @@
+version: '3.1'
+
+services:
+  app:
+    build: .
+    image: account
+    depends_on:
+      - db
+    ports:
+      - 8081:4000
+  db:
+    image: mysql
+    ports:
+      - 3306:3306
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: account_social
+      MYSQL_ROOT_HOST: '%'
+  # app:
+  #   image: supermarket_ms
+  #   environment:
+  #     DB_HOST: 127.0.0.1
+  #     DB_PORT: 3306
+  #     DB_USER: root
+  #     DB_PASSWORD: secret
+  #     DB_NAME: supermarket_db
+  #     URL: 0.0.0.0:4000
+  #   network_mode: "host"
