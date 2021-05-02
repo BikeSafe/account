@@ -32,11 +32,10 @@ export class UserResolver {
   user(@Arg("id", () => Int) id: number) {
     return User.findOne({ id });
   }
-  @Query(() => String)
+  @Query(() => Boolean)
   @UseMiddleware(isAuth)
-  bye(@Ctx() { payload }: MyContext) {
-    console.log(payload);
-    return `your user id is: ${payload!.userId}`;
+  isAuth() {
+    return true;
   }
   @Query(() => ProfileResponse, { nullable: true })
   async profile(@Ctx() context: MyContext) {
