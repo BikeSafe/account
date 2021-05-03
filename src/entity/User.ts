@@ -1,32 +1,37 @@
-import { Field, Int, ObjectType } from "type-graphql";
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  OneToMany,
+  Generated,
+} from "typeorm";
+import { TokenWhiteList } from "./accountTokenWhiteList";
 
-@ObjectType()
 @Entity("users")
 export class User extends BaseEntity {
-  @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
+  @Column("text")
+  @Generated("uuid")
+  uid: string;
+
   @Column("text")
   firstName: string;
 
-  @Field()
   @Column("text")
   lastName: string;
 
-  @Field(() => Int)
   @Column()
   age: number;
 
-  @Field()
   @Column("text")
   email: string;
 
   @Column("text")
   password: string;
 
-  @Column("int", { default: 0 })
-  tokenVersion: number;
+  @OneToMany(() => TokenWhiteList, (tokenWhiteList) => tokenWhiteList.user)
+  tokens: TokenWhiteList[];
 }
