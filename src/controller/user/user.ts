@@ -49,7 +49,8 @@ export const register = async (
   const hashedPassword = await hash(newuserdata.password, 12);
   newuserdata.password = hashedPassword;
   const email = newuserdata.email;
-  const verify = User.findOne({ where: { email } });
+
+  const verify = await User.findOne({ where: { email } });
   if (verify) {
     res.json({ msg: "this account already exists" });
   }
