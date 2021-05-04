@@ -48,6 +48,11 @@ export const register = async (
   const newuserdata: User = req.body;
   const hashedPassword = await hash(newuserdata.password, 12);
   newuserdata.password = hashedPassword;
+  const email = newuserdata.email;
+  const verify = User.findOne({ where: { email } });
+  if (verify) {
+    res.json({ msg: "this account already exists" });
+  }
   try {
     const user = await getRepository(User).insert(newuserdata);
     // const userReturn = await User.findOne({where:{}})
