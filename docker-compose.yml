@@ -1,13 +1,13 @@
 version: '3.1'
 
 services:
-  # app:
-  #   build: .
-  #   image: account
-  #   depends_on:
-  #     - db
-  #   ports:
-  #     - 8081:4000
+  app:
+    build: .
+    image: account
+    depends_on:
+      - db
+    ports:
+      - 8081:4000
   db:
     image: mysql
     ports:

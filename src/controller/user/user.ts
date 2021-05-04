@@ -50,7 +50,8 @@ export const register = async (
   newuserdata.password = hashedPassword;
   try {
     const user = await getRepository(User).insert(newuserdata);
-    return res.json(user);
+    // const userReturn = await User.findOne({where:{}})
+    return res.json({ uid: user.generatedMaps[0].uid });
   } catch (error) {
     console.log(error);
     return res.json({ msg: "error when creating user" });

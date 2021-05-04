@@ -39,9 +39,9 @@ export const logout = async (
     await TokenWhiteList.delete(tokenWhiteList);
   } catch (err) {
     console.log(err);
-    return res.json("");
+    return res.json({ ok: false });
   }
-  return res.json({ ok: "true" });
+  return res.json({ ok: true });
 };
 export const isAuth = async (
   req: Request,
