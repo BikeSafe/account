@@ -6,6 +6,7 @@ import {
   getUsersbyUids,
   profile,
   register,
+  updateUser,
 } from "../controller/user/user";
 
 const router = Router();
@@ -19,4 +20,6 @@ router.get("/users/uids", getUsersbyUids);
 router.post("/register", register);
 router.post("/login", login);
 router.post("/logout", logout);
+
+router.put("/user", updateUser);
 export default router;

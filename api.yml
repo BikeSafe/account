@@ -1,0 +1,319 @@
+swagger: '2.0'
+info:
+  description: |
+    This is a sample Account server.
+  version: 1.0.0
+  title: Swagger Account Microservice
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: user
+    description: Operations about user
+    externalDocs:
+      description: Find out more about our store
+      url: 'http://swagger.io'
+paths:
+  /users:
+    get:
+      tags:
+        - user
+      summary: get users list
+      description: This can be done by any user.
+      operationId: getUsers
+      produces:
+        - application/json
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+               $ref: '#/definitions/UserResponse'
+  '/user/{uid}':
+    get:
+      tags:
+        - user
+      summary: get user by defined uid
+      description: This can be done by any user.
+      operationId: getUsersbyId
+      produces:
+        - application/json
+      parameters:
+        - name: uid
+          in: path
+          description: The uid that needs to be fetched.
+          required: true
+          type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/UserResponse'
+        404:
+          description: could not find user
+  /profile:
+    get:
+      tags:
+        - user
+      summary: get user profile by authorization token.
+      description: This can only be done by the logged in user.
+      operationId: getUserProfile
+      produces:
+        - application/json
+      parameters:
+        - name: authorization
+          in: header
+          type: string
+          description: Token Authorization of type "bearer <token>"
+          required: true
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/UserResponse'
+        "404":
+          description: could not find token/user
+        "400":
+          description: no authorization headers
+        "500":
+          description: server error
+  /isauth:
+    get:
+      tags:
+        - user
+      summary: verificar usuario autenticado en el sistema
+      operationId: AuthUser
+      produces:
+        - application/json
+      parameters:
+        - name: authorization
+          in: header
+          type: string
+          description: Token Authorization of type "bearer <token>"
+          required: true
+      responses:
+        '200':
+          description: login successful
+          schema:
+            type: object
+            properties:
+              accesToken:
+                type: string
+        "400":
+          description: no authorization headers
+        "404":
+          description: could not find token/user
+        "500":
+          description: server error
+  /users/uids:
+    get:
+      tags:
+        - user
+      summary: get user by defined uid
+      description: This can be done by any user.
+      operationId: getUsersbyUids
+      produces:
+        - application/json
+      parameters:
+        - in: "body"
+          name: uids
+          description: Uids of user that needs to be fetched.
+          schema:
+              type: object
+              properties:
+                uids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+               $ref: '#/definitions/UserResponse'
+        404:
+          description: could not find users
+        500:
+          description: server error
+  /register:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: This can be done by any user.
+      operationId: createUser
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: User registry data.
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        "409":
+          description: this account already exists
+        "500":
+          description: server error
+        "200":
+          description: user created successfully
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: Login user into the system
+      operationId: loginUser
+      produces:
+        - application/json
+      parameters:
+        - in: "body"
+          name: LoginInput
+          description: The email and password for user login
+          required: true
+          schema:
+            $ref: '#/definitions/LoginInput'
+      responses:
+        '200':
+          description: login successful
+          schema:
+            type: object
+            properties:
+              accesToken:
+                type: string
+        '401':
+          description: Invalid password supplied
+        '404':
+          description: could not find user
+  /user/logout:
+    post:
+      tags:
+        - user
+      summary: Logs out current logged in user session
+      operationId: logoutUser
+      produces:
+        - application/json
+      parameters:
+        - name: authorization
+          in: header
+          type: string
+          description: Token Authorization of type "bearer <token>"
+          required: true
+      responses:
+        "400":
+          description: no authorization headers
+        "404":
+          description: could not find token/user
+        "500":
+          description: server error
+        "200":
+          description: successful operation and return uid
+  /user:
+    put:
+      tags:
+        - user
+      summary: get user profile by authorization token.
+      description: This can only be done by the logged in user.
+      operationId: updateUserProfile
+      produces:
+        - application/json
+      parameters:
+        - name: authorization
+          in: header
+          type: string
+          description: Token Authorization of type "bearer <token>"
+          required: true
+        - in: body
+          name: userData
+          description: User update data.
+          required: true
+          schema:
+            type: object
+            properties:
+              firstName:
+                type: string
+              lastName:
+                type: string
+              age:
+                type: number
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/UserResponse'
+        "404":
+          description: could not find token/user
+        "400":
+          description: no authorization headers
+        "500":
+          description: server error
+
+
+definitions:
+
+  TokenWhiteList:
+    type: object
+    properties:
+      id:
+        type: integer
+      token:
+        type: string
+      isActive:
+        type: boolean
+      user:
+        $ref: '#/definitions/User'
+
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      uid:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      age:
+        type: integer
+      email:
+        type: string
+      password:
+        type: string
+  LoginInput:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+
+  UserResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      uid:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      age:
+        type: integer
+      email:
+        type: string
+
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
+host: virtserver.swaggerhub.com
+basePath: /dgonzalezo/Account/1.0.0
+schemes:
+  - https
+  - http

@@ -26,7 +26,7 @@ const startServer = async () => {
   app.get("/", (_req, res) => res.send("hello"));
 
   app.listen(4000, () => {
-    console.log(`🚀 Server ready at http://localhost:4001`);
+    console.log(`🚀 Server ready at http://localhost:4000`);
   });
 };
 

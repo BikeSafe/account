@@ -9,11 +9,13 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
   const email = req.body.email;
   const user = await User.findOne({ where: { email } });
   if (!user) {
+    res.status(404).send("could not find user");
     throw new Error("could not find user");
   }
   const password = req.body.password;
   const valid = await compare(password, user.password);
   if (!valid) {
+    res.status(401).send("bad password");
     throw new Error("bad password");
   }
   const token = await createAccsessToken(user);
@@ -26,22 +28,26 @@ export const logout = async (
 ): Promise<Response> => {
   const authorization = req.headers["authorization"];
   if (!authorization) {
+    res.status(400).send("no authorization headers");
     throw new Error("no authorization headers");
   }
   try {
     const token = authorization.split(" ")[1];
-    console.log(token);
-
     const tokenWhiteList = await TokenWhiteList.findOne({ where: { token } });
     if (!tokenWhiteList) {
-      throw new Error("could not find user");
+      res.status(404).send("could not find token");
+      throw new Error("could not find token");
     }
+    const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
+    const user = await User.findOne(payload.userId);
     await TokenWhiteList.delete(tokenWhiteList);
+    return res
+      .status(user ? 200 : 404)
+      .send(user ? user.uid : "could not find user");
   } catch (err) {
     console.log(err);
-    return res.json({ ok: false });
+    return res.status(500).send(err);
   }
-  return res.json({ ok: true });
 };
 export const isAuth = async (
   req: Request,
@@ -49,22 +55,23 @@ export const isAuth = async (
 ): Promise<Response> => {
   const authorization = req.headers["authorization"];
   if (!authorization) {
+    res.status(400).send("no authorization headers");
     throw new Error("no authorization headers");
   }
   try {
     const token = authorization.split(" ")[1];
     const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
     const user = await User.findOne(payload.userId);
-    if (!user) {
-      throw new Error("could not find user");
-    }
     const tokenWhiteList = await TokenWhiteList.findOne({ where: { token } });
     if (!tokenWhiteList) {
+      res.status(404).send("could not find token");
       throw new Error("could not find token");
     }
-    return res.json({ ok: true, uid: user.uid });
+    return res
+      .status(user ? 200 : 404)
+      .send(user ? user.uid : "could not find user");
   } catch (err) {
     console.log(err);
-    return res.json({ ok: false });
+    return res.status(500).send(err);
   }
 };
